@@ -1,0 +1,96 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    signingConfigs {
+        // For demonstration purposes only.  NOT A SECURE KEYSTORE - DO NOT USE FOR RELEASE
+        release {
+            keyAlias '...'
+            keyPassword '...'
+            storeFile file('...')
+            storePassword '...'
+        }
+    }
+
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.hereticpurge.quickvat"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // base dependencies
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:$rootProject.supportVersion"
+    implementation "com.android.support:preference-v7:$rootProject.supportVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintLayoutVersion"
+    implementation "com.android.support:recyclerview-v7:$rootProject.supportVersion"
+    implementation "com.android.support:design:$rootProject.supportVersion"
+
+    // conflict resolution dependencies
+    implementation "com.android.support:support-v4:$rootProject.supportVersion"
+    implementation "com.android.support:animated-vector-drawable:$rootProject.supportVersion"
+    implementation "com.android.support:exifinterface:$rootProject.supportVersion"
+    implementation "com.android.support:customtabs:$rootProject.supportVersion"
+
+    // Google Libraries
+    implementation "com.google.android.gms:play-services-analytics:$rootProject.googleAnalyticsVersion"
+    implementation "com.google.android.gms:play-services-ads:$rootProject.googleAdsVersion"
+
+    // Gson Libraries
+    implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
+
+    // License Dialog Libraries
+    implementation "de.psdev.licensesdialog:licensesdialog:$rootProject.licenseDialogVersion"
+
+    // Picasso Libraries
+    implementation "com.squareup.picasso:picasso:$rootProject.picassoVersion"
+
+    // Timber Libraries
+    implementation "com.jakewharton.timber:timber:$rootProject.timberVersion"
+
+    // Okhttp Libraries
+    implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
+
+    // RxJava Libraries
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxjavaAndroidVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
+
+    // Retrofit Libraries
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+
+    // Dagger 2 Libraries
+    implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
+    implementation "com.google.dagger:dagger-android:$rootProject.daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
+
+    // Room database libraries
+    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
+    implementation "android.arch.lifecycle:extensions:$rootProject.roomVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+
+    // Butterknife Libraries
+    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
+
+    // Test dependencies
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
