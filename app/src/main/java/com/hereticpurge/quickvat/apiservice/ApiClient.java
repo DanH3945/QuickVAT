@@ -7,6 +7,6 @@ public interface ApiClient {
 
     // Simple retrofit call to get the full tax details from the api
 
-    @GET("https://jsonvat.com/")
+    @GET(ApiReference.ApiUrl)
     Call<ApiModel> getVATRates();
 }
