@@ -3,7 +3,10 @@ package com.hereticpurge.quickvat.model;
 import java.util.Date;
 import java.util.Map;
 
-public class TaxObject {
+public class TaxPeriodObject {
+
+    // Object representing tax data from a single country and effective date.  Several of these
+    // may be used per CountryObject depending on how often the taxes have changed per country.
 
     private Date mEffectiveStart;
 
