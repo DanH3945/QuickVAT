@@ -1,6 +1,5 @@
 package com.hereticpurge.quickvat.apiservice.apimodel;
 
-import java.util.Date;
 import java.util.Map;
 
 public class TaxPeriodObject {
@@ -9,5 +8,13 @@ public class TaxPeriodObject {
     // may be used per CountryObject depending on how often the taxes have changed per country.
 
     private String effective_from;
-    private RatesObject rates;
+    private Map<String, String> rates;
+
+    public String getEffectiveFrom() {
+        return effective_from;
+    }
+
+    public Map<String, String> getRates() {
+        return rates;
+    }
 }

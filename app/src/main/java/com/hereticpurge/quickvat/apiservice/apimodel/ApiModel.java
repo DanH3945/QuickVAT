@@ -1,5 +1,8 @@
 package com.hereticpurge.quickvat.apiservice.apimodel;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ApiModel {
 
     // Model representing the full data pulled from the ApiClient retrofit call.
@@ -11,4 +14,15 @@ public class ApiModel {
 
     private CountryObject[] rates;
 
+    public String getDetails() {
+        return details;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public List<CountryObject> getRates() {
+        return Arrays.asList(rates);
+    }
 }
