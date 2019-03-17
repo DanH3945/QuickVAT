@@ -1,4 +1,4 @@
-package com.hereticpurge.quickvat.apiservice;
+package com.hereticpurge.quickvat.apiservice.apimodel;
 
 public class ApiModel {
 
@@ -6,8 +6,9 @@ public class ApiModel {
     // All the data comes at once in a single json return.  (no choice here since that's
     // how the api is setup).
 
-    String details;
-    String version;
+    private String details;
+    private String version;
 
+    private CountryObject[] rates;
 
 }

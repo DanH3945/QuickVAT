@@ -1,5 +1,7 @@
 package com.hereticpurge.quickvat.apiservice;
 
+import com.hereticpurge.quickvat.apiservice.apimodel.ApiModel;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
 
