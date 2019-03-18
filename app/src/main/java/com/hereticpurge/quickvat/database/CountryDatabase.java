@@ -1,11 +1,11 @@
-package com.hereticpurge.quickvat.appmodel;
+package com.hereticpurge.quickvat.database;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.hereticpurge.quickvat.database.CountryDao;
+import com.hereticpurge.quickvat.appmodel.CountryObject;
 
 @Database(entities = {CountryObject.class}, version = 1)
 public abstract class CountryDatabase extends RoomDatabase{
