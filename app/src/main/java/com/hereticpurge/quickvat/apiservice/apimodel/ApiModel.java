@@ -12,7 +12,7 @@ public class ApiModel {
     private String details;
     private String version;
 
-    private CountryObject[] rates;
+    private ApiCountryObject[] rates;
 
     public String getDetails() {
         return details;
@@ -22,7 +22,7 @@ public class ApiModel {
         return version;
     }
 
-    public List<CountryObject> getRates() {
+    public List<ApiCountryObject> getRates() {
         return Arrays.asList(rates);
     }
 }
