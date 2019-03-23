@@ -46,8 +46,8 @@ dependencies {
     implementation "com.android.support:customtabs:$rootProject.supportVersion"
 
     // Google Libraries
-    implementation "com.google.android.gms:play-services-analytics:$rootProject.googleAnalyticsVersion"
-    implementation "com.google.android.gms:play-services-ads:$rootProject.googleAdsVersion"
+//    implementation "com.google.android.gms:play-services-analytics:$rootProject.googleAnalyticsVersion"
+//    implementation "com.google.android.gms:play-services-ads:$rootProject.googleAdsVersion"
 
     // Gson Libraries
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
