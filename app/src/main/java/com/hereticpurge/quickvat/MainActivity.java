@@ -6,15 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.hereticpurge.quickvat.apiservice.ApiClient;
-import com.hereticpurge.quickvat.apiservice.apimodel.ApiModel;
-import com.hereticpurge.quickvat.depinjector.ApiClientComponent;
-import com.hereticpurge.quickvat.depinjector.ContextModule;
-import com.hereticpurge.quickvat.depinjector.DaggerApiClientComponent;
+import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,28 +17,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Temporary test code block to fix some issues with dagger and update the
-        // build tools version.
-        ApiClientComponent apiClientComponent = DaggerApiClientComponent.builder()
-                .contextModule(new ContextModule(this))
-                .build();
+        // TIMBER MUST BE THE FIRST THING LOADED TO HANDLE DEBUGGING CORRECTLY
+        // NOTHING GOES ABOVE THIS COMMENT
+        if (BuildConfig.DEBUG) {
+            // Timber debug tree
+            Timber.plant(new Timber.DebugTree());
+            Timber.d("Loaded Debug Tree");
+        } else {
+            // Timber Release Tree
+            Timber.plant(new TimberReleaseTree());
+            Timber.d("Loaded Release Tree");
+        }
+        // END OF REQUIRED TIMBER LOAD
 
-        ApiClient apiClient = apiClientComponent.getApiClient();
 
-        Call<ApiModel> apiModelCall = apiClient.getVATRates();
-
-        apiModelCall.enqueue(new Callback<ApiModel>() {
-            @Override
-            public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ApiModel> call, Throwable t) {
-
-            }
-        });
-        // End temp test code
     }
 
     private void loadFragment(Fragment fragment, boolean addToBackStack, String tag) {
