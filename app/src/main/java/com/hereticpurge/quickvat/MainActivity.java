@@ -1,11 +1,13 @@
 package com.hereticpurge.quickvat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.hereticpurge.quickvat.apiservice.QuickVATBackgroundService;
 import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
 
 import timber.log.Timber;
@@ -31,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         // END OF REQUIRED TIMBER LOAD
 
 
+        // Start the service running to update the local database with the latest VAT rates
+        // provided by jsonvat.com
+        startQuickVatService();
+
     }
 
     private void loadFragment(Fragment fragment, boolean addToBackStack, String tag) {
@@ -41,5 +47,9 @@ public class MainActivity extends AppCompatActivity {
         if (addToBackStack) fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
+    }
+
+    private void startQuickVatService() {
+        startService(new Intent(getBaseContext(), QuickVATBackgroundService.class));
     }
 }
