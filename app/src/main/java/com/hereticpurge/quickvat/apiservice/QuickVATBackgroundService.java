@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.hereticpurge.quickvat.apiservice.apimodel.ApiCountryObject;
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiModel;
+import com.hereticpurge.quickvat.apiservice.apimodel.ApiTaxPeriodObject;
+import com.hereticpurge.quickvat.appmodel.CountryObject;
 import com.hereticpurge.quickvat.depinjector.ApiClientComponent;
 import com.hereticpurge.quickvat.depinjector.ContextModule;
 import com.hereticpurge.quickvat.depinjector.DaggerApiClientComponent;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,7 +49,7 @@ public class QuickVATBackgroundService extends Service{
         call.enqueue(new Callback<ApiModel>() {
             @Override
             public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
-                addToDatabase(response.body());
+                // addToDatabase(response.body());
             }
 
             @Override
@@ -58,13 +62,24 @@ public class QuickVATBackgroundService extends Service{
     }
 
     private void addToDatabase(ApiModel apiModel) {
-        // Test Code
-        Set<String> keys = apiModel.getRates().get(0).getPeriods().get(0).getRates().keySet();
+        // apiModel.getRates().get(0).getPeriods().get(0).getRates().keySet();
 
-        for (String key : keys) {
-            String rate = apiModel.getRates().get(0).getPeriods().get(0).getRates().get(key);
+        for (ApiCountryObject apiCountryObject : apiModel.getRates()) {
+            CountryObject databaseCountryObject = new CountryObject();
 
-            Timber.d("Rate level : " + key + " --------- " + "Rate : " + rate);
+            databaseCountryObject.setCountryName(apiCountryObject.getName());
+            databaseCountryObject.setCode(apiCountryObject.getCode());
+            databaseCountryObject.setCountryCode(apiCountryObject.getCountryCode());
+
+            Map<String, String> rates = new HashMap<>();
+
+            // Date mostRecentDate = null;
+            // Todo implement a better way to do dates since it's deprecated
+
+            for (ApiTaxPeriodObject apiTaxPeriodObject : apiCountryObject.getPeriods()) {
+                // Todo finish implementing me
+            }
         }
+
     }
 }

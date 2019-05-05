@@ -6,6 +6,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Entity
@@ -81,13 +82,27 @@ public class CountryObject {
 
     @TypeConverter
     public String mapToStringConverter(Map<String, String> rateMap) {
-        // Todo Implement me
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+        for (String key : rateMap.keySet()) {
+            sb.append("#");
+            sb.append(key);
+            sb.append(",");
+            sb.append(rateMap.get(key));
+        }
+        return sb.toString();
     }
 
     @TypeConverter
     public Map<String, String> stringToMapConverter(String rateString) {
-        // Todo implement me
-        return null;
+        Map<String, String> rateMap = new HashMap<>();
+
+        String[] rates = rateString.split("#");
+
+        for (String rate : rates) {
+            String[] temp = rate.split(",");
+            rateMap.put(temp[0], temp[1]);
+        }
+        return rateMap;
     }
 }
