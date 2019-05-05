@@ -3,8 +3,13 @@ package com.hereticpurge.quickvat.appmodel;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
+import android.arch.persistence.room.TypeConverters;
+
+import java.util.Map;
 
 @Entity
+@TypeConverters(CountryObject.class)
 public class CountryObject {
 
     @PrimaryKey(autoGenerate = true)
@@ -19,20 +24,20 @@ public class CountryObject {
     @ColumnInfo(name = "country_code")
     private String countryCode;
 
-//    @ColumnInfo(name = "current_rates")
-//    List<String> rates;
+    @ColumnInfo(name = "current_rates")
+    Map<String, String> rates;
 
     public CountryObject() {
 
     }
 
-//    public CountryObject(int id, String countryName, String code, String countryCode, List<String> rates) {
-//        this.id = id;
-//        this.countryName = countryName;
-//        this.code = code;
-//        this.countryCode = countryCode;
-//        this.rates = rates;
-//    }
+    public CountryObject(int id, String countryName, String code, String countryCode, Map<String, String> rates) {
+        this.id = id;
+        this.countryName = countryName;
+        this.code = code;
+        this.countryCode = countryCode;
+        this.rates = rates;
+    }
 
     public int getId() {
         return id;
@@ -66,11 +71,23 @@ public class CountryObject {
         this.countryCode = countryCode;
     }
 
-//    public List<String> getRates() {
-//        return rates;
-//    }
-//
-//    public void setRates(List<String> rates) {
-//        this.rates = rates;
-//    }
+    public Map<String, String> getRates() {
+        return rates;
+    }
+
+    public void setRates(Map<String, String> rates) {
+        this.rates = rates;
+    }
+
+    @TypeConverter
+    public String mapToStringConverter(Map<String, String> rateMap) {
+        // Todo Implement me
+        return null;
+    }
+
+    @TypeConverter
+    public Map<String, String> stringToMapConverter(String rateString) {
+        // Todo implement me
+        return null;
+    }
 }
