@@ -37,6 +37,10 @@ public class MainActivity extends AppCompatActivity {
         // provided by jsonvat.com
         startQuickVatService();
 
+        if (savedInstanceState == null) {
+            loadFragment(VatDisplayFragment.createInstance(), false, null);
+        }
+
     }
 
     private void loadFragment(Fragment fragment, boolean addToBackStack, String tag) {

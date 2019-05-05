@@ -10,9 +10,12 @@ import com.hereticpurge.quickvat.depinjector.ApiClientComponent;
 import com.hereticpurge.quickvat.depinjector.ContextModule;
 import com.hereticpurge.quickvat.depinjector.DaggerApiClientComponent;
 
+import java.util.Set;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import timber.log.Timber;
 
 public class QuickVATBackgroundService extends Service{
 
@@ -42,15 +45,26 @@ public class QuickVATBackgroundService extends Service{
         call.enqueue(new Callback<ApiModel>() {
             @Override
             public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
-                System.out.println(" ----------------- RESPONSE FROM SERVICE ----------------");
+                addToDatabase(response.body());
             }
 
             @Override
             public void onFailure(Call<ApiModel> call, Throwable t) {
-                System.out.print("-------------- FAILURE FROM SERVICE -----------------");
+                Timber.e(t);
             }
         });
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void addToDatabase(ApiModel apiModel) {
+        // Test Code
+        Set<String> keys = apiModel.getRates().get(0).getPeriods().get(0).getRates().keySet();
+
+        for (String key : keys) {
+            String rate = apiModel.getRates().get(0).getPeriods().get(0).getRates().get(key);
+
+            Timber.d("Rate level : " + key + " --------- " + "Rate : " + rate);
+        }
     }
 }
