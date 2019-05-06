@@ -9,6 +9,8 @@ import android.arch.persistence.room.TypeConverters;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 @Entity
 @TypeConverters(CountryObject.class)
 public class CountryObject {
@@ -101,7 +103,9 @@ public class CountryObject {
 
         for (String rate : rates) {
             String[] temp = rate.split(",");
-            rateMap.put(temp[0], temp[1]);
+            if (temp.length > 1) {
+                rateMap.put(temp[0], temp[1]);
+            }
         }
         return rateMap;
     }

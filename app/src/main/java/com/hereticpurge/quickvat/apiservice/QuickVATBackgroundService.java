@@ -9,10 +9,12 @@ import com.hereticpurge.quickvat.apiservice.apimodel.ApiCountryObject;
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiModel;
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiTaxPeriodObject;
 import com.hereticpurge.quickvat.appmodel.CountryObject;
+import com.hereticpurge.quickvat.database.CountryDatabase;
 import com.hereticpurge.quickvat.depinjector.ApiClientComponent;
 import com.hereticpurge.quickvat.depinjector.ContextModule;
 import com.hereticpurge.quickvat.depinjector.DaggerApiClientComponent;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,12 +24,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 public class QuickVATBackgroundService extends Service{
-
-    /*
-    TODO implement me
-    Service should run once at startup and regularly thereafter to keep the database of rates
-    up to date.
-     */
 
     @Nullable
     @Override
@@ -49,7 +45,7 @@ public class QuickVATBackgroundService extends Service{
         call.enqueue(new Callback<ApiModel>() {
             @Override
             public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
-                // addToDatabase(response.body());
+                addToDatabase(response.body());
             }
 
             @Override
@@ -63,6 +59,7 @@ public class QuickVATBackgroundService extends Service{
 
     private void addToDatabase(ApiModel apiModel) {
         // apiModel.getRates().get(0).getPeriods().get(0).getRates().keySet();
+        // Todo this call needs to be made async.  Executor?
 
         for (ApiCountryObject apiCountryObject : apiModel.getRates()) {
             CountryObject databaseCountryObject = new CountryObject();
@@ -73,12 +70,55 @@ public class QuickVATBackgroundService extends Service{
 
             Map<String, String> rates = new HashMap<>();
 
-            // Date mostRecentDate = null;
-            // Todo implement a better way to do dates since it's deprecated
+            Calendar mostRecentPeriod = null;
 
             for (ApiTaxPeriodObject apiTaxPeriodObject : apiCountryObject.getPeriods()) {
-                // Todo finish implementing me
+
+                Calendar currentCalendar = Calendar.getInstance();
+
+                try {
+                    String[] effectiveFrom = apiTaxPeriodObject.getEffectiveFrom().split("-");
+                    int year = Integer.parseInt(effectiveFrom[0]);
+                    int month = Integer.parseInt(effectiveFrom[1]);
+                    int day = Integer.parseInt(effectiveFrom[2]);
+                    currentCalendar.set(year, month, day, 0, 0);
+                } catch (NumberFormatException ex) {
+                    // If the date isn't properly formatted we catch the exception and continue
+                    // to the next tax period.  If we don't know the date of the period we
+                    // can't properly figure out which entries should be kept.
+                    Timber.e(ex);
+                    continue;
+                }
+
+                if (mostRecentPeriod == null) {
+                    mostRecentPeriod = currentCalendar;
+                }
+
+                for (String rate : apiTaxPeriodObject.getRates().keySet()) {
+                    try {
+                        if (mostRecentPeriod.before(currentCalendar) || mostRecentPeriod.equals(currentCalendar)) {
+                            rates.put(rate, apiTaxPeriodObject.getRates().get(rate));
+                        }
+
+                        if (mostRecentPeriod.after(currentCalendar) && !rates.containsKey(rate)) {
+                            rates.put(rate, apiTaxPeriodObject.getRates().get(rate));
+                        }
+                    } catch (NullPointerException e) {
+                        // Rates might be null so we just catch the exception and move on.
+                        Timber.e(e);
+                    }
+                }
+
+                if (mostRecentPeriod.before(currentCalendar)) {
+                    mostRecentPeriod = currentCalendar;
+                }
+
             }
+
+            databaseCountryObject.setRates(rates);
+
+            CountryDatabase.getCountryDatabase(this).countryDao().insertCountryObject(databaseCountryObject);
+
         }
 
     }

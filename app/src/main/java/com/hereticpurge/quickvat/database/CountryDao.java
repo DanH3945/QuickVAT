@@ -2,6 +2,7 @@ package com.hereticpurge.quickvat.database;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
 import com.hereticpurge.quickvat.appmodel.CountryObject;
@@ -19,4 +20,7 @@ public interface CountryDao {
 
     @Query("SELECT * FROM CountryObject WHERE country_name = :name")
     LiveData<CountryObject> getSingleCountryObjectByName(String name);
+
+    @Insert
+    long insertCountryObject(CountryObject countryObject);
 }
