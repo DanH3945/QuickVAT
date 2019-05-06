@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Start the service running to update the local database with the latest VAT rates
         // provided by jsonvat.com
-        // startQuickVatService();
+        startQuickVatService();
 
     }
 

@@ -1,8 +1,7 @@
 package com.hereticpurge.quickvat.apiservice;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiCountryObject;
@@ -14,26 +13,24 @@ import com.hereticpurge.quickvat.depinjector.ApiClientComponent;
 import com.hereticpurge.quickvat.depinjector.ContextModule;
 import com.hereticpurge.quickvat.depinjector.DaggerApiClientComponent;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import timber.log.Timber;
 
-public class QuickVatBackgroundService extends Service{
+public class QuickVatBackgroundService extends IntentService {
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
+    private static final String SERVICE_NAME = "QuickVatService";
 
-        return null;
+    public QuickVatBackgroundService() {
+        super(SERVICE_NAME);
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    protected void onHandleIntent(@Nullable Intent intent) {
 
         ApiClientComponent apiClientComponent = DaggerApiClientComponent.builder()
                 .contextModule(new ContextModule(getApplicationContext()))
@@ -42,24 +39,21 @@ public class QuickVatBackgroundService extends Service{
         ApiClient mApiClient = apiClientComponent.getApiClient();
 
         Call<ApiModel> call = mApiClient.getVATRates();
-        call.enqueue(new Callback<ApiModel>() {
-            @Override
-            public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
-                addToDatabase(response.body());
-            }
 
-            @Override
-            public void onFailure(Call<ApiModel> call, Throwable t) {
-                Timber.e(t);
-            }
-        });
+        // Not a normal retrofit call.  We want to call on the current IntentService thread
+        // not the retrofit thread which will try to send the return back to the UI thread.
+        // We need to use the data in this thread so we use execute() instead of enqueue() to
+        // stay on thread.
+        try {
+            addToDatabase(call.execute().body());
+        } catch (IOException e) {
+            Timber.d(e);
+        }
 
-        return super.onStartCommand(intent, flags, startId);
     }
 
     private void addToDatabase(ApiModel apiModel) {
         // apiModel.getRates().get(0).getPeriods().get(0).getRates().keySet();
-        // Todo this call needs to be made async.  Executor?
 
         for (ApiCountryObject apiCountryObject : apiModel.getRates()) {
             CountryObject databaseCountryObject = new CountryObject();
@@ -118,6 +112,8 @@ public class QuickVatBackgroundService extends Service{
             databaseCountryObject.setRates(rates);
 
             CountryDatabase.getCountryDatabase(getBaseContext()).countryDao().insertCountryObject(databaseCountryObject);
+
+            Timber.d("Country added to DB from service --------- %s", databaseCountryObject.getCountryName());
 
         }
 
