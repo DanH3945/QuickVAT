@@ -23,7 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
-public class QuickVATBackgroundService extends Service{
+public class QuickVatBackgroundService extends Service{
 
     @Nullable
     @Override

@@ -7,13 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.hereticpurge.quickvat.apiservice.QuickVATBackgroundService;
-import com.hereticpurge.quickvat.appmodel.CountryObject;
+import com.hereticpurge.quickvat.apiservice.QuickVatBackgroundService;
 import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
-
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import timber.log.Timber;
 
@@ -55,6 +50,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startQuickVatService() {
-        startService(new Intent(getBaseContext(), QuickVATBackgroundService.class));
+        startService(new Intent(getBaseContext(), QuickVatBackgroundService.class));
     }
 }

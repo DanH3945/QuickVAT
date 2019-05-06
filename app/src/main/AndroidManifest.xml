@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".apiservice.QuickVATBackgroundService" />
+        <service android:name=".apiservice.QuickVatBackgroundService" />
     </application>
 
 </manifest>
