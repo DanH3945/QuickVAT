@@ -117,7 +117,7 @@ public class QuickVATBackgroundService extends Service{
 
             databaseCountryObject.setRates(rates);
 
-            CountryDatabase.getCountryDatabase(this).countryDao().insertCountryObject(databaseCountryObject);
+            CountryDatabase.getCountryDatabase(getBaseContext()).countryDao().insertCountryObject(databaseCountryObject);
 
         }
 
