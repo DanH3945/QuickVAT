@@ -1,18 +1,20 @@
 package com.hereticpurge.quickvat;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.hereticpurge.quickvat.apiservice.QuickVatBackgroundService;
+import com.hereticpurge.quickvat.apiservice.QuickVatJobService;
+import com.hereticpurge.quickvat.timberlogging.TimberDebugTree;
 import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
 
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final String FIRST_RUN_PREF_STRING = "FirstRun";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         // NOTHING GOES ABOVE THIS COMMENT
         if (BuildConfig.DEBUG) {
             // Timber debug tree
-            Timber.plant(new Timber.DebugTree());
+            Timber.plant(new TimberDebugTree());
             Timber.d("Loaded Debug Tree");
         } else {
             // Timber Release Tree
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Start the service running to update the local database with the latest VAT rates
         // provided by jsonvat.com
-        startQuickVatService();
+        QuickVatJobService.schedule(getApplicationContext());
 
     }
 
@@ -47,9 +49,5 @@ public class MainActivity extends AppCompatActivity {
         if (addToBackStack) fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
-    }
-
-    private void startQuickVatService() {
-        startService(new Intent(getBaseContext(), QuickVatBackgroundService.class));
     }
 }

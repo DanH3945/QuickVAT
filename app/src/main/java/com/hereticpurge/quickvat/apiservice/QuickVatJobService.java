@@ -1,8 +1,9 @@
 package com.hereticpurge.quickvat.apiservice;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v4.app.JobIntentService;
 
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiCountryObject;
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiModel;
@@ -21,16 +22,24 @@ import java.util.Map;
 import retrofit2.Call;
 import timber.log.Timber;
 
-public class QuickVatBackgroundService extends IntentService {
+public class QuickVatJobService extends JobIntentService {
 
-    private static final String SERVICE_NAME = "QuickVatService";
+    private static final int ONE_MINUTE = 1000 * 60;
+    private static final int FIVE_MINUTES = ONE_MINUTE * 5; // Smallest possible period for JobScheduler;
+    private static final int TWENTY_FOUR_HOURS = ONE_MINUTE * 60 * 24;
 
-    public QuickVatBackgroundService() {
-        super(SERVICE_NAME);
+    private static final int JOB_ID = 1;
+
+    public static void schedule(Context context) {
+        enqueueWork(context, QuickVatJobService.class, JOB_ID, new Intent());
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    protected void onHandleWork(@Nullable Intent intent) {
+        doUpdateDatabase();
+    }
+
+    private void doUpdateDatabase() {
 
         ApiClientComponent apiClientComponent = DaggerApiClientComponent.builder()
                 .contextModule(new ContextModule(getApplicationContext()))
@@ -49,7 +58,6 @@ public class QuickVatBackgroundService extends IntentService {
         } catch (IOException e) {
             Timber.d(e);
         }
-
     }
 
     private void addToDatabase(ApiModel apiModel) {
@@ -111,9 +119,9 @@ public class QuickVatBackgroundService extends IntentService {
 
             databaseCountryObject.setRates(rates);
 
-            CountryDatabase.getCountryDatabase(getBaseContext()).countryDao().insertCountryObject(databaseCountryObject);
+            CountryDatabase.getCountryDatabase(getApplicationContext()).countryDao().insertCountryObject(databaseCountryObject);
 
-            Timber.d("Country added to DB from service --------- %s", databaseCountryObject.getCountryName());
+            Timber.d("Country added to DB from service: %s", databaseCountryObject.getCountryName());
 
         }
 
