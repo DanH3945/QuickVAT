@@ -1,5 +1,7 @@
 package com.hereticpurge.quickvat;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -37,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Start the service running to update the local database with the latest VAT rates
         // provided by jsonvat.com
-        QuickVatJobIntentService.schedule(getApplicationContext());
+        if (isNetworkConnected()) {
+            QuickVatJobIntentService.schedule(getApplicationContext());
+        }
 
     }
 
@@ -49,5 +53,16 @@ public class MainActivity extends AppCompatActivity {
         if (addToBackStack) fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
         fragmentManager.executePendingTransactions();
+    }
+
+    private boolean isNetworkConnected() {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            return cm.getActiveNetworkInfo() != null;
+        } catch (NullPointerException e) {
+            Timber.e(e);
+            return false;
+        }
     }
 }
