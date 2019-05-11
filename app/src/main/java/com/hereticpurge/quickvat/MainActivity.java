@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import com.hereticpurge.quickvat.apiservice.QuickVatJobService;
+import com.hereticpurge.quickvat.apiservice.QuickVatJobIntentService;
 import com.hereticpurge.quickvat.timberlogging.TimberDebugTree;
 import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
 
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Start the service running to update the local database with the latest VAT rates
         // provided by jsonvat.com
-        QuickVatJobService.schedule(getApplicationContext());
+        QuickVatJobIntentService.schedule(getApplicationContext());
 
     }
 

@@ -22,7 +22,7 @@ import java.util.Map;
 import retrofit2.Call;
 import timber.log.Timber;
 
-public class QuickVatJobService extends JobIntentService {
+public class QuickVatJobIntentService extends JobIntentService {
 
     private static final int ONE_MINUTE = 1000 * 60;
     private static final int FIVE_MINUTES = ONE_MINUTE * 5; // Smallest possible period for JobScheduler;
@@ -31,7 +31,7 @@ public class QuickVatJobService extends JobIntentService {
     private static final int JOB_ID = 1;
 
     public static void schedule(Context context) {
-        enqueueWork(context, QuickVatJobService.class, JOB_ID, new Intent());
+        enqueueWork(context, QuickVatJobIntentService.class, JOB_ID, new Intent());
     }
 
     @Override

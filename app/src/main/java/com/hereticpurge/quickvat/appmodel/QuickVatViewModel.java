@@ -31,8 +31,4 @@ public class QuickVatViewModel extends AndroidViewModel {
         return mCountryDatabase.countryDao().getSingleCountryObjectByName(name);
     }
 
-    public long insertCountryObject(CountryObject countryObject) {
-        return mCountryDatabase.countryDao().insertCountryObject(countryObject);
-    }
-
 }
