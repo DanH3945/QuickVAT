@@ -24,10 +24,6 @@ import timber.log.Timber;
 
 public class QuickVatJobIntentService extends JobIntentService {
 
-    private static final int ONE_MINUTE = 1000 * 60;
-    private static final int FIVE_MINUTES = ONE_MINUTE * 5; // Smallest possible period for JobScheduler;
-    private static final int TWENTY_FOUR_HOURS = ONE_MINUTE * 60 * 24;
-
     private static final int JOB_ID = 1;
 
     public static void schedule(Context context) {
