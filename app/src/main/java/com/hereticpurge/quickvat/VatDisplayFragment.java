@@ -14,9 +14,16 @@ import android.widget.TextView;
 import com.hereticpurge.quickvat.appmodel.CountryObject;
 import com.hereticpurge.quickvat.appmodel.QuickVatViewModel;
 
-public class VatDisplayFragment extends Fragment implements Observer<CountryObject> {
+import java.util.List;
+
+import timber.log.Timber;
+
+public class VatDisplayFragment extends Fragment implements Observer<List<CountryObject>> {
 
     public static final String TAG = "VatDisplayFragment";
+
+    private List<CountryObject> mCountryList;
+    private CountryObject mSelectedCountry;
 
     QuickVatViewModel mViewModel;
 
@@ -29,19 +36,26 @@ public class VatDisplayFragment extends Fragment implements Observer<CountryObje
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Timber.d("Fragment Loading %s", TAG);
         View view = inflater.inflate(R.layout.vat_display_fragment_layout, container, false);
 
         mTextView = view.findViewById(R.id.vat_display_main_text);
 
         mViewModel = ViewModelProviders.of(this).get(QuickVatViewModel.class);
 
-        mViewModel.getSingleCountryObjectById(1).observe(this, this);
+        mViewModel.getCountryObjects().observe(this, this);
+        Timber.d("Added ViewModel Observer");
 
         return view;
     }
 
     @Override
-    public void onChanged(@Nullable CountryObject countryObject) {
-        mTextView.setText(countryObject.getCountryName());
+    public void onChanged(@Nullable List<CountryObject> countryObjects) {
+        Timber.d("Country List Updating");
+        mCountryList = countryObjects;
+    }
+
+    private void updateUI() {
+        Timber.d("Updating UI");
     }
 }
