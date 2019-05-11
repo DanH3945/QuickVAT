@@ -1,5 +1,6 @@
 package com.hereticpurge.quickvat;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -11,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.hereticpurge.quickvat.apiservice.QuickVatJobIntentService;
+import com.hereticpurge.quickvat.appmodel.QuickVatViewModel;
+import com.hereticpurge.quickvat.database.CountryDatabase;
 import com.hereticpurge.quickvat.timberlogging.TimberDebugTree;
 import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
 
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         // overflow menu visible to allow manual database updates.
         if (BuildConfig.DEBUG) {
             menu.findItem(R.id.overflow_menu_debug_refresh).setVisible(true);
+            menu.findItem(R.id.overflow_menu_clear_database).setVisible(true);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -106,6 +110,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.overflow_menu_debug_refresh:
                 doDatabaseUpdate();
                 break;
+
+            case R.id.overflow_menu_clear_database:
+                ViewModelProviders.of(this).get(QuickVatViewModel.class).clearDatabase();
 
         }
         return super.onOptionsItemSelected(item);

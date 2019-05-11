@@ -31,4 +31,13 @@ public class QuickVatViewModel extends AndroidViewModel {
         return mCountryDatabase.countryDao().getSingleCountryObjectByName(name);
     }
 
+    public void clearDatabase() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mCountryDatabase.countryDao().clearDatabase();
+            }
+        }).start();
+    }
+
 }

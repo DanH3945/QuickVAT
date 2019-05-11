@@ -53,9 +53,20 @@ public class VatDisplayFragment extends Fragment implements Observer<List<Countr
     public void onChanged(@Nullable List<CountryObject> countryObjects) {
         Timber.d("Country List Updating");
         mCountryList = countryObjects;
+        updateUI();
     }
 
     private void updateUI() {
         Timber.d("Updating UI");
+        mTextView.setText("");
+
+        Timber.d("List size: %s", mCountryList.size());
+
+        StringBuilder sb = new StringBuilder();
+
+        for (CountryObject c : mCountryList) {
+            sb.append(c.getCountryName() + ", ");
+        }
+        mTextView.setText(sb.toString());
     }
 }
