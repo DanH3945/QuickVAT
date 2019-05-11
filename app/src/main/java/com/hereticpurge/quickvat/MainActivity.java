@@ -43,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
             doDatabaseUpdate();
         }
 
-
-        // Start the service running to update the local database with the latest VAT rates
-        // provided by jsonvat.com
-
         if (savedInstanceState == null) {
             loadFragment(VatDisplayFragment.createInstance(), false, null);
         }
@@ -64,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void doDatabaseUpdate() {
+        // Start the service running to update the local database with the latest VAT rates
+        // provided by jsonvat.com
         if (isNetworkConnected()) {
             QuickVatJobIntentService.schedule(getApplicationContext());
             Timber.d("Internet Connected.  Performing DB update.");
