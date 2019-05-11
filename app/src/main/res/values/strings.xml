@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">QuickVAT</string>
+    <string name="menu_about_title">About</string>
+    <string name="menu_preferences_title">Preferences</string>
+    <string name="menu_debug_refresh">Debug Refresh Database</string>
 </resources>

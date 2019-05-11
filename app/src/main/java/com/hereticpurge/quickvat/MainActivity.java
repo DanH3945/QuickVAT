@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.hereticpurge.quickvat.apiservice.QuickVatJobIntentService;
 import com.hereticpurge.quickvat.timberlogging.TimberDebugTree;
@@ -29,18 +31,24 @@ public class MainActivity extends AppCompatActivity {
             // Timber debug tree
             Timber.plant(new TimberDebugTree());
             Timber.d("Loaded Debug Tree");
+
         } else {
             // Timber Release Tree
             Timber.plant(new TimberReleaseTree());
             Timber.d("Loaded Release Tree");
+
+            // In release mode check for updates to the database.
+            // If that app runs in debug onCreateOptionsMenu() will make a manual database update
+            // button available to avoid hitting the REST API constantly with restarts.
+            doDatabaseUpdate();
         }
-        // END OF REQUIRED TIMBER LOAD
 
 
         // Start the service running to update the local database with the latest VAT rates
         // provided by jsonvat.com
-        if (isNetworkConnected()) {
-            QuickVatJobIntentService.schedule(getApplicationContext());
+
+        if (savedInstanceState == null) {
+            loadFragment(VatDisplayFragment.createInstance(), false, null);
         }
 
     }
@@ -55,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.executePendingTransactions();
     }
 
+    private void doDatabaseUpdate() {
+        if (isNetworkConnected()) {
+            QuickVatJobIntentService.schedule(getApplicationContext());
+            Timber.d("Internet Connected.  Performing DB update.");
+        }
+    }
+
     private boolean isNetworkConnected() {
         try {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -64,5 +79,37 @@ public class MainActivity extends AppCompatActivity {
             Timber.e(e);
             return false;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.overflow_menu, menu);
+
+        // In debug mode the database doesn't automatically refresh on app start to avoid
+        // flooding the REST service.  Instead this makes the Debug Refresh button in the
+        // overflow menu visible to allow manual database updates.
+        if (BuildConfig.DEBUG) {
+            menu.findItem(R.id.overflow_menu_debug_refresh).setVisible(true);
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.overflow_menu_about:
+                // new AboutDialogFragment().show(getSupportFragmentManager(), null);
+                break;
+
+            case R.id.overflow_menu_preferences:
+                loadFragment(PreferenceFragment.createInstance(), true, PreferenceFragment.TAG);
+                break;
+
+            case R.id.overflow_menu_debug_refresh:
+                doDatabaseUpdate();
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
