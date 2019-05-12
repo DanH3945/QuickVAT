@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +35,7 @@ public class VatDisplayFragment extends Fragment implements Observer<CountryObje
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(QuickVatViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(QuickVatViewModel.class);
     }
 
     @Nullable
@@ -47,6 +49,14 @@ public class VatDisplayFragment extends Fragment implements Observer<CountryObje
             @Override
             public void onClick(View v) {
                 Timber.d("Button Clicked");
+
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+
+                ft.replace(R.id.main_fragment_container, RecyclerFragment.createInstance());
+                ft.addToBackStack(RecyclerFragment.TAG);
+                ft.commit();
+                fm.executePendingTransactions();
             }
         });
 

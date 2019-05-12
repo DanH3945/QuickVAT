@@ -10,6 +10,8 @@ import com.hereticpurge.quickvat.database.CountryDatabase;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class QuickVatViewModel extends AndroidViewModel {
 
     private final MutableLiveData<CountryObject> selectedItem = new MutableLiveData<>();
@@ -44,6 +46,7 @@ public class QuickVatViewModel extends AndroidViewModel {
     }
 
     public void setSelectedItem(CountryObject countryObject) {
+        Timber.d("Setting selected Country to %s", countryObject.getCountryName());
         selectedItem.setValue(countryObject);
     }
 
