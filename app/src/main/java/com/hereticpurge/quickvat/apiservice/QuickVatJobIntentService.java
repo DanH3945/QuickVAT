@@ -9,6 +9,7 @@ import com.hereticpurge.quickvat.apiservice.apimodel.ApiCountryObject;
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiModel;
 import com.hereticpurge.quickvat.apiservice.apimodel.ApiTaxPeriodObject;
 import com.hereticpurge.quickvat.appmodel.CountryObject;
+import com.hereticpurge.quickvat.database.CountryDao;
 import com.hereticpurge.quickvat.database.CountryDatabase;
 import com.hereticpurge.quickvat.depinjector.ApiClientComponent;
 import com.hereticpurge.quickvat.depinjector.ContextModule;
@@ -59,7 +60,16 @@ public class QuickVatJobIntentService extends JobIntentService {
     private void addToDatabase(ApiModel apiModel) {
         // apiModel.getRates().get(0).getPeriods().get(0).getRates().keySet();
 
+        // Get the Dao to work with the database.
+        CountryDao countryDao = CountryDatabase.getCountryDatabase(getApplicationContext()).countryDao();
+
+        // Clear the database to refresh.
+        countryDao.clearDatabase();
+
         for (ApiCountryObject apiCountryObject : apiModel.getRates()) {
+
+            // Api country object conforms to the Retrofit API model which isn't an exact match for
+            // the room database model. So we have to convert from retrofit to room.
             CountryObject databaseCountryObject = new CountryObject();
 
             databaseCountryObject.setCountryName(apiCountryObject.getName());
@@ -68,18 +78,21 @@ public class QuickVatJobIntentService extends JobIntentService {
 
             Map<String, String> rates = new HashMap<>();
 
-            Calendar mostRecentPeriod = null;
+            Calendar lastPeriodDate = null;
 
             for (ApiTaxPeriodObject apiTaxPeriodObject : apiCountryObject.getPeriods()) {
 
-                Calendar currentCalendar = Calendar.getInstance();
+                // New calendar object for our tax period.
+                Calendar currentPeriodDate = Calendar.getInstance();
 
                 try {
+                    // Dates come in the format yyyy-mm-dd as a string.  So we split the string
+                    // and parse the int values to update our calendar.
                     String[] effectiveFrom = apiTaxPeriodObject.getEffectiveFrom().split("-");
                     int year = Integer.parseInt(effectiveFrom[0]);
                     int month = Integer.parseInt(effectiveFrom[1]);
                     int day = Integer.parseInt(effectiveFrom[2]);
-                    currentCalendar.set(year, month, day, 0, 0);
+                    currentPeriodDate.set(year, month, day, 0, 0);
                 } catch (NumberFormatException ex) {
                     // If the date isn't properly formatted we catch the exception and continue
                     // to the next tax period.  If we don't know the date of the period we
@@ -88,17 +101,23 @@ public class QuickVatJobIntentService extends JobIntentService {
                     continue;
                 }
 
-                if (mostRecentPeriod == null) {
-                    mostRecentPeriod = currentCalendar;
+                if (lastPeriodDate == null) {
+                    lastPeriodDate = currentPeriodDate;
                 }
 
                 for (String rate : apiTaxPeriodObject.getRates().keySet()) {
                     try {
-                        if (mostRecentPeriod.before(currentCalendar) || mostRecentPeriod.equals(currentCalendar)) {
+                        // If the current period date is after or equal to the last period we looked
+                        // at then the rates are newer and we want to overwrite them.  If not we
+                        // move to the next check.
+                        if (lastPeriodDate.before(currentPeriodDate) || lastPeriodDate.equals(currentPeriodDate)) {
                             rates.put(rate, apiTaxPeriodObject.getRates().get(rate));
                         }
 
-                        if (mostRecentPeriod.after(currentCalendar) && !rates.containsKey(rate)) {
+                        // If the current period date is before the last period we worked on the rates
+                        // are older and we only want to store them if the key doesn't already
+                        // exist (we haven't seen that tax rate before).
+                        if (lastPeriodDate.after(currentPeriodDate) && !rates.containsKey(rate)) {
                             rates.put(rate, apiTaxPeriodObject.getRates().get(rate));
                         }
                     } catch (NullPointerException e) {
@@ -107,17 +126,17 @@ public class QuickVatJobIntentService extends JobIntentService {
                     }
                 }
 
-                if (mostRecentPeriod.before(currentCalendar)) {
-                    mostRecentPeriod = currentCalendar;
+                if (lastPeriodDate.before(currentPeriodDate)) {
+                    lastPeriodDate = currentPeriodDate;
                 }
 
             }
 
             databaseCountryObject.setRates(rates);
 
-            CountryDatabase.getCountryDatabase(getApplicationContext()).countryDao().insertCountryObject(databaseCountryObject);
+            countryDao.insertCountryObject(databaseCountryObject);
 
-            Timber.d("Country added to DB from service: %s", databaseCountryObject.getCountryName());
+            Timber.d("Country added to DB from service: %s -- With Id: %s", databaseCountryObject.getCountryName(), databaseCountryObject.getId());
 
         }
 
