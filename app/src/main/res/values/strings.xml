@@ -4,4 +4,5 @@
     <string name="menu_preferences_title">Preferences</string>
     <string name="menu_debug_refresh">Debug Refresh Database</string>
     <string name="menu_debug_clear_database">Debug Clear Database</string>
+    <string name="vat_display_country_button_string">Select a Country</string>
 </resources>

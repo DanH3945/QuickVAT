@@ -136,7 +136,7 @@ public class QuickVatJobIntentService extends JobIntentService {
 
             countryDao.insertCountryObject(databaseCountryObject);
 
-            Timber.d("Country added to DB from service: %s -- With Id: %s", databaseCountryObject.getCountryName(), databaseCountryObject.getId());
+            Timber.d("Country added to DB from service: %s", databaseCountryObject.getCountryName());
 
         }
 

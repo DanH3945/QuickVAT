@@ -9,28 +9,31 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.hereticpurge.quickvat.appmodel.CountryObject;
 import com.hereticpurge.quickvat.appmodel.QuickVatViewModel;
 
-import java.util.List;
-
 import timber.log.Timber;
 
-public class VatDisplayFragment extends Fragment implements Observer<List<CountryObject>> {
+public class VatDisplayFragment extends Fragment implements Observer<CountryObject> {
 
     public static final String TAG = "VatDisplayFragment";
 
-    private List<CountryObject> mCountryList;
     private CountryObject mSelectedCountry;
 
     QuickVatViewModel mViewModel;
 
-    TextView mTextView;
+    Button mCountrySelectButton;
 
     public static Fragment createInstance() {
         return new VatDisplayFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(QuickVatViewModel.class);
     }
 
     @Nullable
@@ -39,34 +42,45 @@ public class VatDisplayFragment extends Fragment implements Observer<List<Countr
         Timber.d("Fragment Loading %s", TAG);
         View view = inflater.inflate(R.layout.vat_display_fragment_layout, container, false);
 
-        mTextView = view.findViewById(R.id.vat_display_main_text);
-
-        mViewModel = ViewModelProviders.of(this).get(QuickVatViewModel.class);
-
-        mViewModel.getCountryObjects().observe(this, this);
-        Timber.d("Added ViewModel Observer");
+        mCountrySelectButton = view.findViewById(R.id.vat_display_country_button);
+        mCountrySelectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Timber.d("Button Clicked");
+            }
+        });
 
         return view;
     }
 
     @Override
-    public void onChanged(@Nullable List<CountryObject> countryObjects) {
-        Timber.d("Country List Updating");
-        mCountryList = countryObjects;
+    public void onResume() {
+        super.onResume();
+        mViewModel.getSelected().observe(this, this);
+        Timber.d("Added ViewModel Observer");
+    }
+
+    @Override
+    public void onPause() {
+        mViewModel.getSelected().removeObserver(this);
+        Timber.d("Removed ViewModel Observer");
+        super.onPause();
+    }
+
+    @Override
+    public void onChanged(@Nullable CountryObject countryObject) {
+        Timber.d("Country Object Updating in %s", TAG);
+        mSelectedCountry = countryObject;
         updateUI();
     }
 
     private void updateUI() {
-        Timber.d("Updating UI");
-        mTextView.setText("");
-
-        Timber.d("List size: %s", mCountryList.size());
-
-        StringBuilder sb = new StringBuilder();
-
-        for (CountryObject c : mCountryList) {
-            sb.append(c.getCountryName() + ", ");
+        if (mSelectedCountry != null) {
+            mCountrySelectButton.setText(mSelectedCountry.getCountryName());
+            Timber.d("Updating UI with non-null value");
+        } else {
+            Timber.d("Updating UI with null value");
+            mCountrySelectButton.setText(R.string.vat_display_country_button_string);
         }
-        mTextView.setText(sb.toString());
     }
 }
