@@ -21,8 +21,6 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String FIRST_RUN_PREF_STRING = "FirstRun";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
