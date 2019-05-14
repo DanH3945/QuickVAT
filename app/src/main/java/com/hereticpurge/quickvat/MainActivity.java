@@ -13,7 +13,6 @@ import android.view.MenuItem;
 
 import com.hereticpurge.quickvat.apiservice.QuickVatJobIntentService;
 import com.hereticpurge.quickvat.appmodel.QuickVatViewModel;
-import com.hereticpurge.quickvat.database.CountryDatabase;
 import com.hereticpurge.quickvat.timberlogging.TimberDebugTree;
 import com.hereticpurge.quickvat.timberlogging.TimberReleaseTree;
 
