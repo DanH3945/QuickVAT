@@ -5,10 +5,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hereticpurge.quickvat.appmodel.CountryObject;
@@ -20,11 +22,11 @@ import timber.log.Timber;
 public class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragmentAdapter.RecyclerDisplayViewHolder>
         implements Observer<List<CountryObject>> {
 
-    LiveData<List<CountryObject>> mLiveDataList;
+    private LiveData<List<CountryObject>> mLiveDataList;
 
-    List<CountryObject> mListCountryObjects;
+    private List<CountryObject> mListCountryObjects;
 
-    RecyclerClickListener listener;
+    private RecyclerClickListener listener;
 
     RecyclerFragmentAdapter(LiveData<List<CountryObject>> listLiveData, RecyclerClickListener listener) {
         mLiveDataList = listLiveData;
@@ -45,9 +47,9 @@ public class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragme
 
         Timber.d("Creating ViewHolder for %s", countryObject.getCountryName());
 
-        recyclerDisplayViewHolder.mTextView.setText(countryObject.getCountryName());
+        recyclerDisplayViewHolder.mCountryNameTextView.setText(countryObject.getCountryName());
 
-        recyclerDisplayViewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
+        recyclerDisplayViewHolder.mCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.itemSelected(countryObject);
@@ -80,12 +82,16 @@ public class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragme
 
     class RecyclerDisplayViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mTextView;
+        CardView mCardView;
+        TextView mCountryNameTextView;
+        ImageView mCountryFlagImageView;
 
         public RecyclerDisplayViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            mTextView = itemView.findViewById(R.id.vat_recycler_text);
+            mCardView = itemView.findViewById(R.id.vat_recycler_card);
+            mCountryNameTextView = itemView.findViewById(R.id.vat_recycler_card_country_name_text);
+            mCountryFlagImageView = itemView.findViewById(R.id.vat_recycler_card_country_flag_image);
         }
     }
 

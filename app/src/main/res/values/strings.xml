@@ -5,4 +5,6 @@
     <string name="menu_debug_refresh">Debug Refresh Database</string>
     <string name="menu_debug_clear_database">Debug Clear Database</string>
     <string name="vat_display_country_button_string">Select a Country</string>
+    <string name="default_string">Default</string>
+    <string name="vat_recycler_flag_description">Image of a flag</string>
 </resources>
