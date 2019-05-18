@@ -49,10 +49,6 @@ dependencies {
     implementation "com.android.support:exifinterface:$rootProject.supportVersion"
     implementation "com.android.support:customtabs:$rootProject.supportVersion"
 
-    // Google Libraries
-//    implementation "com.google.android.gms:play-services-analytics:$rootProject.googleAnalyticsVersion"
-//    implementation "com.google.android.gms:play-services-ads:$rootProject.googleAdsVersion"
-
     // Gson Libraries
     implementation "com.google.code.gson:gson:$rootProject.gsonVersion"
 
@@ -67,10 +63,6 @@ dependencies {
 
     // Okhttp Libraries
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
-
-    // RxJava Libraries
-    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxjavaAndroidVersion"
-    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
 
     // Retrofit Libraries
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
